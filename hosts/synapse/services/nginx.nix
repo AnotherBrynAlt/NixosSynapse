@@ -1,5 +1,8 @@
-{ config, pkgs, ... }:
-let
+{
+  config,
+  pkgs,
+  ...
+}: let
   fullyQualifiedDomainName = "${config.networking.hostName}.${config.networking.domain}";
   clientConfig = {
     "m.homeserver".base_url = "https://${fullyQualifiedDomainName}";
@@ -21,7 +24,7 @@ in {
         enableACME = true;
         forceSSL = true;
         locations = {
-          "= /.well-known/matrix/server".extraConfig = makeWellKnown serverConfig; 
+          "= /.well-known/matrix/server".extraConfig = makeWellKnown serverConfig;
           "= /.well-known/matrix/client".extraConfig = makeWellKnown clientConfig;
         };
       };
@@ -37,7 +40,7 @@ in {
       "element.${fullyQualifiedDomainName}" = {
         enableACME = true;
         forceSSL = true;
-        serverAliases = [ "element.${config.networking.domain}" ];
+        serverAliases = ["element.${config.networking.domain}"];
 
         root = pkgs.element-web.override {
           conf = {
@@ -53,4 +56,3 @@ in {
     recommendedTlsSettings = true;
   };
 }
-

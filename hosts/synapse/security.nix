@@ -1,4 +1,4 @@
-{...}: {
+{distributorUser, ...}: {
   security = {
     acme = {
       acceptTerms = true;
@@ -18,16 +18,14 @@
       enable = true;
       extraRules = [
         {
-          users = ["nixos"];
+          users = ["${distributorUser}"];
           keepEnv = true;
-          persist = true;
+          noPass = true;
         }
       ];
     };
 
-    sudo = {
-      enable = false;
-    };
+    sudo.enable = false;
   };
   users.users.nginx.extraGroups = ["matrix-synapse"];
 }

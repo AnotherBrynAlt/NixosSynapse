@@ -4,6 +4,7 @@
   };
 
   outputs = {self, ...} @ inputs: let
+    distributorUser = "nixos";
     system = "x86_64-linux";
     nixpkgs = import inputs.nixpkgs {system = system;};
   in {
@@ -12,7 +13,7 @@
         inherit nixpkgs;
 
         specialArgs = {
-          inherit inputs;
+          inherit inputs distributorUser;
         };
       };
 
@@ -20,17 +21,19 @@
         imports = [./hosts/synapse];
 
         deployment = {
+          # buildOnTarget = true;
           keys = {
             "macaroon" = {
               group = "matrix-synapse";
-              keyCommand = ["cat" "<(echo -en \"macaroon_secret_key: \")" "<(pwgen -s 64 1)"];
+              text = "hi";
+              # keyCommand = ["cat <(echo -en \"macaroon_secret_key: \") <(pwgen -s 64 1)"];
             };
           };
           privilegeEscalationCommand = ["doas"];
           tags = ["web" "matrix" "synapse"];
           targetHost = "2001:19f0:5401:1402:5400:4ff:fe2b:33aa";
           targetPort = 22;
-          targetUser = "nixos";
+          targetUser = distributorUser;
         };
       };
     };

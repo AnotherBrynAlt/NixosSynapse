@@ -41,10 +41,10 @@ in {
       enable_registration = true;
       enable_registration_without_verification = true;
       app_service_config_files = [
-        #        "/var/lib/matrix-appservice-discord/discord-registration.yaml"
+        "/var/lib/matrix-synapse/discord-registration.yaml"
       ];
       extraConfigFiles = [
-        "/etc/keyring/matrix/matrix-shared-secret"
+        "/run/secrets/matrix-shared-secret"
       ];
       trusted_key_servers = [
         {
@@ -62,9 +62,7 @@ in {
 
   services.matrix-appservice-discord = {
     enable = true;
-    ### Make this file
-    ### Add APPSERVICE_DISCORD_AUTH_CLIENT_I_D and APPSERVICE_DISCORD_AUTH_BOT_TOKEN
-    environmentFile = /etc/keyring/matrix/discord-tokens.env;
+    environmentFile = "/run/secrets/matrix-appservice-discord.env";
     settings = {
       auth = {
         usePrivilegedIntents = true;

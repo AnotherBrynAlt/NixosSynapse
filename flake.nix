@@ -1,6 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {self, ...} @ inputs: let
@@ -18,17 +20,20 @@
       };
 
       synapse = {
-        imports = [./hosts/synapse];
+        imports = [
+          inputs.sops-nix.nixosModules.sops
+          ./hosts/synapse
+        ];
+
+        sops.defaultSopsFile = ./secrets/secrets.yaml;
+        sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+        sops.secrets = {
+          email = {};
+          "matrix-appservice-discord.env" = {};
+          matrix-shared-secret = {};
+        };
 
         deployment = {
-          # buildOnTarget = true;
-          keys = {
-            "macaroon" = {
-              group = "matrix-synapse";
-              text = "hi";
-              # keyCommand = ["cat <(echo -en \"macaroon_secret_key: \") <(pwgen -s 64 1)"];
-            };
-          };
           privilegeEscalationCommand = ["doas"];
           tags = ["web" "matrix" "synapse"];
           targetHost = "2001:19f0:5401:1402:5400:4ff:fe2b:33aa";
@@ -41,7 +46,7 @@
     devShells.${system}.default = nixpkgs.mkShell {
       buildInputs = with nixpkgs; [
         colmena
-        pwgen
+        sops
       ];
     };
   };

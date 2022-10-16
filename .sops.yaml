@@ -1,0 +1,10 @@
+keys:
+  - &admin_bryn age1ltfx82gaqcwpdhqqwm4m9armehlns5k4w8rrh4f86wl9m3q7fdwswxsjyh
+  - &server_synapse age1q4ww46w8p77p6y9sdtdw6vh7rtvwkp834j87dc569w0edmcw2cdqh3xcf2
+creation_rules:
+  - path_regex: secrets/[^/]+\.yaml$
+    key_groups:
+    - age:
+      - *admin_bryn
+      - *server_synapse
+
